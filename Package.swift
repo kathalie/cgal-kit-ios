@@ -5,19 +5,59 @@ import PackageDescription
 
 let package = Package(
     name: "CGALKit",
+    platforms: [
+        .iOS(.v12),
+        .macOS(.v12)
+    ],
     products: [
-        // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
             name: "CGALKit",
-            targets: ["CGALKit"]),
+            targets: ["CGALKitSwift", "CGALKitCxx"]
+        ),
+    ],
+    dependencies: [
+        .package(url: "https://github.com/SimplyDanny/SwiftLintPlugins", from: "0.57.0")
     ],
     targets: [
-        // Targets are the basic building blocks of a package, defining a module or a test suite.
-        // Targets can depend on other targets in this package and products from dependencies.
+        // Swift target
         .target(
-            name: "CGALKit"),
+            name: "CGALKitSwift",
+            dependencies: [
+                "CGALKitCxx"
+            ],
+            path: "Sources/CGALKit/Swift",
+            swiftSettings: [
+                .interoperabilityMode(.Cxx)
+            ],
+            plugins: [.plugin(name: "SwiftLintBuildToolPlugin", package: "SwiftLintPlugins")]
+        ),
+        
+        // C++ target
+        .target(
+            name: "CGALKitCxx",
+            path: "Sources/CGALKit/Cxx",
+            publicHeadersPath: "include",
+            cxxSettings: [
+                .unsafeFlags([
+                    "-I", "/usr/local/include",
+                    "-I", "/opt/homebrew/opt/boost/include",
+                    "-I", "/opt/homebrew/opt/cgal/include",
+                ]),
+            ],
+            linkerSettings: [
+                .unsafeFlags([
+                    "-L/opt/homebrew/lib",
+                    "-L/opt/homebrew/opt/boost/lib",
+                    "-L/opt/homebrew/opt/cgal/lib",
+                ])]
+        ),
+        
+        // Test target
         .testTarget(
             name: "CGALKitTests",
-            dependencies: ["CGALKit"]),
-    ]
+            dependencies: ["CGALKitSwift"],
+            swiftSettings: [.interoperabilityMode(.Cxx)]
+        ),
+    ],
+    cxxLanguageStandard: .cxx17
 )
