@@ -10,7 +10,7 @@
 
 ## Installation
 
-###Swift Package Manager (SPM)
+### Swift Package Manager (SPM)
 1. In Xcode, in your destination target, It is important to enable [Swift and C++ interoperability](https://www.swift.org/documentation/cxx-interop/#enabling-c-interoperability). In **Build Settings > Swift Compiler - Language** set **C++ and Objective-C++ Interoperability** to **C++/Objective-C++**.
 2. Go to **File > Add Packcage Dependencies...**
 3. Insert `https://github.com/kathalie/cgal-kit-ios.git` to the field **Search or Enter Package URL**
